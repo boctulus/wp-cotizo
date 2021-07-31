@@ -1,0 +1,61 @@
+<style>
+    #cotizo_form {
+        padding: 50px 20px 50px 20px;
+        background-color: #0078bd;
+    }
+
+    .cotizo_select {
+      color: #6C757D !important;
+    }
+
+    #cotizo_cart_btn {
+        background-color: #FF499C;
+        color: #FFF;
+        border-color: crimson;
+        font-weight: 900;
+        height: 50px;
+    }
+</style>
+
+<form id="cotizo_form">
+      
+    <div class="form-row row">
+        <div class="form-group col-md-6">
+            <input type="text" class="form-control rounded-pill" id="length" placeholder="Largo (mm)" min="0">
+        </div>
+
+        <div class="form-group col-md-6 mt-3 mt-md-0">
+            <input type="text" class="form-control rounded-pill" id="width" placeholder="Ancho (mm)"  min="0">
+        </div>
+    </div>
+
+    <div class="form-group mt-3">
+        <select class="form-select rounded-pill cotizo_select" aria-label="Espesor" id="thickness">
+            <option selected>Espesor (mm)</option>
+            <option value="3">3 mm</option>
+            <option value="4">4 mm</option>
+            <option value="5">5 mm</option>
+        </select>
+    </div>
+
+    <div class="form-group mt-3">
+        <select class="form-select rounded-pill cotizo_select" aria-label="Color" id="color">
+            <option selected>Color</option>
+            <option value="transparente">Transparente</option>
+        </select>
+    </div>
+
+    <div class="form-group mt-3">
+        <input type="text" class="form-control rounded-pill" id="price" placeholder="$">
+    </div>
+
+    <div class="col-12 mt-3">
+        <button type="submit" class="btn btn-primary rounded-pill w-100" id="cotizo_cart_btn">Añadir al Carrito  </button>
+    </div>
+
+    <div class="alert alert-warning alert-dismissible fade show mt-5" role="alert">
+        <strong>Holy guacamole!</strong> You should check in on some of those fields below.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+</form>
