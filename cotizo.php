@@ -49,11 +49,11 @@ function enqueues()
 {  
 	// JS
     #wp_register_script('prefix_bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js');
-	wp_register_script('prefix_bootstrap', Files::get_rel_path(). '/assets/js/bootstrap.bundle.min.js');
+	wp_register_script('prefix_bootstrap', Files::get_rel_path(). '/assets/js/bootstrap/bootstrap.bundle.min.js');
     wp_enqueue_script('prefix_bootstrap');
 
     // CSS
-	wp_register_style('prefix_bootstrap', Files::get_rel_path() . '/assets/css/bootstrap.min.css');
+	wp_register_style('prefix_bootstrap', Files::get_rel_path() . '/assets/css/bootstrap/bootstrap.min.css');
     #wp_register_style('prefix_bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css');
     wp_enqueue_style('prefix_bootstrap');
 
@@ -70,7 +70,7 @@ function wpb_demo_shortcode() {
 	?>
 
 	<script>
-		function addNotice(message, type = 'info', id_container = 'alert_container'){
+		function addNotice(message, type = 'info', id_container = 'alert_container', replace = false){
 			let types = ['info', 'danger', 'warning', 'success'];
 
 			if (jQuery.inArray(type, types) == -1){
@@ -83,20 +83,30 @@ function wpb_demo_shortcode() {
 			}
 
 			let alert_container  = document.getElementById(id_container);
-			
-			alert_container.innerHTML = `
-				<div class="alert alert-${type} alert-dismissible fade show mt-5" role="alert" id="cotizo_notice">
-					<span>
-						${message}
-					</span>
-					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-				</div>
-			`;
+		
+			if (replace){
+				alert_container.innerHTML = '';
+			}
+
+			let id_notice = "notice-" + (new Date().getTime()).toString();
+
+			div = document.createElement('div');			
+			div.innerHTML = `
+			<div class="alert alert-${type} alert-dismissible fade show mt-3" role="alert">
+				<span>
+					${message}
+				</span>
+				<button type="button" class="btn-close notice" data-bs-dismiss="alert" aria-label="Close" id="${id_notice}"></button>
+			</div>`;
+
+			alert_container.classList.add('mt-5');
+			alert_container.prepend(div);
 		}
 
 		function hideNotice(id_container = 'alert_container'){
 			let div  = document.querySelector(`div#${id_container}`);
 			div.innerHTML = '';
+			alert_container.classList.remove('mt-3');
 		}
 
 		let formats = <?php echo json_encode($formats); ?>
