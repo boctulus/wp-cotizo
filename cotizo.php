@@ -94,9 +94,9 @@ function wpb_demo_shortcode() {
 			`;
 		}
 
-		function hideNotice(){
-			let div  = document.getElementById('cotizo_notice');
-			div.classList.remove('show');
+		function hideNotice(id_container = 'alert_container'){
+			let div  = document.querySelector(`div#${id_container}`);
+			div.innerHTML = '';
 		}
 
 		let formats = <?php echo json_encode($formats); ?>
