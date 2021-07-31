@@ -1,1 +1,46 @@
 /* No funciona => no usar */
+
+body {
+    background-color: aquamarine !important;
+}
+
+/* No funciona => no usar */
+
+#cotizo_form {
+    padding: 50px 20px 50px 20px;
+    background-color: #0078bd;
+}
+
+.cotizo_select {
+  color: #000000 !important;
+}
+
+#cotizo_cart_btn {
+    background-color: #FF499C;
+    color: #FFFFFF;
+    border-color: crimson;
+    font-weight: 900;
+    font-size: 105%;
+    height: 60px;
+}
+
+.grey {
+    color: #6C757D !important;
+}
+
+.black {
+    color: #000000 !important;
+}
+
+.form-control::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: #6C757D;
+    opacity: 1; /* Firefox */
+}
+
+.form-control:-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: #6C757D;
+}
+
+.form-control::-ms-input-placeholder { /* Microsoft Edge */
+    color: #6C757D;
+}

@@ -57,8 +57,8 @@ function enqueues()
     #wp_register_style('prefix_bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css');
     wp_enqueue_style('prefix_bootstrap');
 
-	wp_register_style('prefix_bootstrap', Files::get_rel_path() . '/assets/css/cotizo.css');
-    wp_enqueue_style('prefix_bootstrap');
+	wp_register_style('cotizo', Files::get_rel_path() . '/assets/css/cotizo.css');
+    wp_enqueue_style('cotizo');
 }
 
 add_action( 'wp_enqueue_scripts', 'enqueues');
