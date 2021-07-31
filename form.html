@@ -5,15 +5,37 @@
     }
 
     .cotizo_select {
-      color: #6C757D !important;
+      color: #000000 !important;
     }
 
     #cotizo_cart_btn {
         background-color: #FF499C;
-        color: #FFF;
+        color: #FFFFFF;
         border-color: crimson;
         font-weight: 900;
-        height: 50px;
+        font-size: 105%;
+        height: 60px;
+    }
+
+    .grey {
+        color: #6C757D !important;
+    }
+
+    .black {
+        color: #000000 !important;
+    }
+
+    .form-control::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+        color: #6C757D;
+        opacity: 1; /* Firefox */
+    }
+
+    .form-control:-ms-input-placeholder { /* Internet Explorer 10-11 */
+        color: #6C757D;
+    }
+
+    .form-control::-ms-input-placeholder { /* Microsoft Edge */
+        color: #6C757D;
     }
 </style>
 
@@ -21,17 +43,17 @@
       
     <div class="form-row row">
         <div class="form-group col-md-6">
-            <input type="text" class="form-control rounded-pill" id="length" placeholder="Largo (mm)" min="0">
+            <input type="text" class="form-control rounded-pill black" id="length" placeholder="Largo (mm)" min="0">
         </div>
 
         <div class="form-group col-md-6 mt-3 mt-md-0">
-            <input type="text" class="form-control rounded-pill" id="width" placeholder="Ancho (mm)"  min="0">
+            <input type="text" class="form-control rounded-pill black" id="width" placeholder="Ancho (mm)"  min="0">
         </div>
     </div>
 
     <div class="form-group mt-3">
-        <select class="form-select rounded-pill cotizo_select" aria-label="Espesor" id="thickness">
-            <option selected>Espesor (mm)</option>
+        <select class="form-select rounded-pill cotizo_select grey" aria-label="Espesor" id="thickness">
+            <option value="0" selected>Espesor (mm)</option>
             <option value="3">3 mm</option>
             <option value="4">4 mm</option>
             <option value="5">5 mm</option>
@@ -39,14 +61,14 @@
     </div>
 
     <div class="form-group mt-3">
-        <select class="form-select rounded-pill cotizo_select" aria-label="Color" id="color">
-            <option selected>Color</option>
+        <select class="form-select rounded-pill cotizo_select grey" aria-label="Color" id="color">
+            <option value="0" selected>Color</option>
             <option value="transparente">Transparente</option>
         </select>
     </div>
 
     <div class="form-group mt-3">
-        <input type="text" class="form-control rounded-pill" id="price" placeholder="$">
+        <input type="text" class="form-control rounded-pill black" id="price" placeholder="$" readonly>
     </div>
 
     <div class="col-12 mt-3">
