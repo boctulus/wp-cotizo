@@ -66,9 +66,60 @@ add_action( 'wp_enqueue_scripts', 'enqueues');
 
 // function that runs when shortcode is called
 function wpb_demo_shortcode() {  
+	global $formats;
 	?>
 
 	<script>
+		function addNotice(message, type = 'info', id_container = 'alert_container'){
+			let types = ['info', 'danger', 'warning', 'success'];
+
+			if (jQuery.inArray(type, types) == -1){
+				throw "Tipo de notificación inválida para " + type;
+			}
+
+			if (message === ""){
+				throw "Mensaje de notificación no puede quedar vacio";
+				return;
+			}
+
+			let alert_container  = document.getElementById(id_container);
+			
+			alert_container.innerHTML = `
+				<div class="alert alert-${type} alert-dismissible fade show mt-5" role="alert" id="cotizo_notice">
+					<span>
+						${message}
+					</span>
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
+			`;
+		}
+
+		function hideNotice(){
+			let div  = document.getElementById('cotizo_notice');
+			div.classList.remove('show');
+		}
+
+		let formats = <?php echo json_encode($formats); ?>
+
+		let min_dim = 999999;
+		let max_dim = 0;
+		for (let i=0; i<formats.length; i++){
+			let wxh = formats[i]['wxh'];
+			let min_local = Math.min(wxh[0], wxh[1]);
+			let max_local = Math.max(wxh[0], wxh[1]);
+			
+			if (min_local < min_dim){
+				min_dim = min_local;
+			}
+
+			if (max_local > max_dim){
+				max_dim = max_local;
+			}
+		}
+
+		console.log(min_dim);
+		console.log(max_dim);
+
 		document.addEventListener('DOMContentLoaded', () => {
 			let espesor_elem = document.getElementById('thickness');
 			let color_elem = document.getElementById('color');
