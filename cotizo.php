@@ -92,47 +92,34 @@ function wpb_demo_shortcode() {
 
 			div = document.createElement('div');			
 			div.innerHTML = `
-			<div class="alert alert-${type} alert-dismissible fade show mt-3" role="alert">
+			<div class="alert alert-${type} alert-dismissible fade show mt-3" role="alert" id="${id_notice}">
 				<span>
 					${message}
 				</span>
-				<button type="button" class="btn-close notice" data-bs-dismiss="alert" aria-label="Close" id="${id_notice}"></button>
+				<button type="button" class="btn-close notice" data-bs-dismiss="alert" aria-label="Close"></button>
 			</div>`;
 
 			alert_container.classList.add('mt-5');
 			alert_container.prepend(div);
+
+			return id_notice;
 		}
 
-		function hideNotice(id_container = 'alert_container'){
-			let div  = document.querySelector(`div#${id_container}`);
-			div.innerHTML = '';
-			alert_container.classList.remove('mt-3');
-		}
-
-		let formats = <?php echo json_encode($formats); ?>
-
-		let min_dim = 999999;
-		let max_dim = 0;
-		for (let i=0; i<formats.length; i++){
-			let wxh = formats[i]['wxh'];
-			let min_local = Math.min(wxh[0], wxh[1]);
-			let max_local = Math.max(wxh[0], wxh[1]);
-			
-			if (min_local < min_dim){
-				min_dim = min_local;
-			}
-
-			if (max_local > max_dim){
-				max_dim = max_local;
+		function hideNotice(id_container = 'alert_container', notice_id = null){
+			if (notice_id == null){
+				let div  = document.querySelector(`div#${id_container}`);
+				div.innerHTML = '';
+				alert_container.classList.remove('mt-3');
+			} else {
+				document.getElementById(notice_id).remove();
 			}
 		}
-
-		console.log(min_dim);
-		console.log(max_dim);
 
 		document.addEventListener('DOMContentLoaded', () => {
-			let espesor_elem = document.getElementById('thickness');
-			let color_elem = document.getElementById('color');
+			largo_elem = document.getElementById('cotizo_length');
+			ancho_elem = document.getElementById('cotizo_width');
+			espesor_elem = document.getElementById('cotizo_thickness');
+			color_elem = document.getElementById('cotizo_color');
 		
 			espesor_elem.addEventListener("change", function() {
 				if (espesor_elem.value == 0){
@@ -153,7 +140,51 @@ function wpb_demo_shortcode() {
 					color_elem.classList.add('black');
 				}
 			}); 
+
+			function restrict_length_width(){
+				if (parseInt(largo_elem.value) >max_dim || parseInt(ancho_elem.value) >max_dim){
+					addNotice(`Ninguna dimensión puede superar los ${max_dim} mm`);
+				} else {
+
+				}
+			}
+
+			largo_elem.addEventListener("change", function() {
+				restrict_length_width();
+			}); 
+
+			ancho_elem.addEventListener("change", function() {
+				restrict_length_width();
+			});
+
+
+
 		}, false);
+
+
+		// Main
+		let largo_elem;
+		let ancho_elem;
+		let espesor_elem;
+		let color_elem;
+
+		let formats = <?php echo json_encode($formats); ?>
+		
+		let min_dim = 999999;
+		let max_dim = 0;
+		for (let i=0; i<formats.length; i++){
+			let wxh = formats[i]['wxh'];
+			let min_local = Math.min(wxh[0], wxh[1]);
+			let max_local = Math.max(wxh[0], wxh[1]);
+			
+			if (min_local < min_dim){
+				min_dim = min_local;
+			}
+
+			if (max_local > max_dim){
+				max_dim = max_local;
+			}
+		}
 	</script>
 	
 	<?php
