@@ -190,35 +190,41 @@ function wpb_demo_shortcode() {
 			return results;
 		}
 
+		// General
+		function setDropdownOptions(select_elem, options, default_option){
+			select_elem.innerHTML = '';
+
+			let opt = new Option(default_option['text'], default_option['value']);
+			opt.setAttribute('selected', true);
+			select_elem.appendChild(opt);
+
+			if (typeof options == 'undefined' || options.length == 0){
+				select_elem.disabled = true;
+				return;
+			} else {
+				select_elem.disabled = false;
+			}
+
+			for (let i=0; i<options.length; i++){
+				let opt = new Option(options[i]['text'], options[i]['value']);
+				select_elem.appendChild(opt);
+			}
+		}
+
 		function setThicknessOptions(values){
-			espesor_elem.innerHTML = '';
-
-			let opt = new Option('Espesor (mm)', '');
-			opt.setAttribute('selected', true);
-			espesor_elem.appendChild(opt);
-
-			for (let i=0; i<values.length; i++){
-				let opt = new Option(`${values[i]} mm`, values[i]);
-				espesor_elem.appendChild(opt);
+			if (typeof values == 'undefined'){
+				return;
 			}
+
+			let options = [];
+			for (let i=0; i<values.length; i++){
+				options.push({'text': `${values[i]} mm`, 'value': values[i]});
+			}
+
+			setDropdownOptions(espesor_elem, options, {'text': 'Espesor (mm)', 'value': ''});
 		}
 
-		// cambiar <= ver cuaderno
-		function setColorOptions(values){
-			color_elem.innerHTML = '';
-
-			let opt = new Option('Color', '');
-			opt.setAttribute('selected', true);
-			color_elem.appendChild(opt);
-
-			for (let i=0; i<values.length; i++){
-				let opt = new Option(`${values[i]}`, values[i]);
-				color_elem.appendChild(opt);
-			}
-		}
-
-
-		function run()
+		function run_step1()
 		{
 			let largo = largo_elem.value == '' ? 0 : parseInt(largo_elem.value);
 			let ancho = ancho_elem.value == '' ? 0 : parseInt(ancho_elem.value);
@@ -247,6 +253,30 @@ function wpb_demo_shortcode() {
 			hideNotice();
 		}
 
+		function run_step2(){
+			let largo = largo_elem.value == '' ? 0 : parseInt(largo_elem.value);
+			let ancho = ancho_elem.value == '' ? 0 : parseInt(ancho_elem.value);
+			let espesor = espesor_elem.value == '' ? 0 : parseInt(espesor_elem.value);
+
+			_formats = searchFormatsByWxHxT(largo, ancho, espesor);
+
+			options = [];
+			for (var i=0; i<_formats.length; i++)
+			{
+				let wxh   = _formats[i]['wxh'][0] + '-' + _formats[i]['wxh'][1];
+				let value = `${wxh}-${_formats[i]['thickness']}-${_formats[i]['color']}`;
+
+				//console.log(value);
+
+				options.push({
+					'text': _formats[i]['color'],
+					'value': value
+				});
+			}
+
+			setDropdownOptions(color_elem, options, {'text': 'Color', 'value': null});
+		}
+
 		/*
 			 Main
 		*/
@@ -255,8 +285,6 @@ function wpb_demo_shortcode() {
 		let ancho_elem;
 		let espesor_elem;
 		let color_elem;
-		
-		var that = this;
 
 		document.addEventListener('DOMContentLoaded', () => {
 			largo_elem = document.getElementById('cotizo_length');
@@ -285,11 +313,15 @@ function wpb_demo_shortcode() {
 			}); 
 
 			largo_elem.addEventListener("change", function() {
-				run();
+				run_step1();
 			}); 
 
 			ancho_elem.addEventListener("change", function() {
-				run();
+				run_step1();
+			});
+
+			espesor_elem.addEventListener("change", function() {
+				run_step2();
 			});
 		}, false);
 
