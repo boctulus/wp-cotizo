@@ -115,6 +115,80 @@ function wpb_demo_shortcode() {
 			}
 		}
 
+		/*
+			Encuentra paneles con esas dimensiones de ancho y alto mínimas (intercambiables)
+		*/
+		function searchFormatsByWxH(min_d0, min_d1){
+			let results = [];
+			for (let i=0; i<formats.length; i++){
+				let wxh = formats[i]['wxh'];
+
+				if ((wxh[0] >= min_d0 && wxh[1] >= min_d1) || (wxh[0] >= min_d1 && wxh[1] >= min_d0)){
+					results.push(formats[i]);
+				}
+			}
+
+			return results;
+		}
+
+		/*
+			searchThickness(searchFormatsByWxH(2000, 500))
+			=>
+			[3, 4, 5]
+		*/
+		function searchThickness(arr){
+			let espesores = [];
+			for (let i=0; i<arr.length; i++){
+				let rows = arr[i][0];
+				
+				for (let j=0; j<rows.length; j++){
+					espesor = rows[j]['thickness'];
+					espesores.push(espesor);
+				}
+			}
+
+			espesores = Object.keys(espesores.reduce((l, r) => l[r] = l, {})).sort()
+			return espesores;
+		}
+
+		/*
+			ssearchFormatsByWxHxT(500, 500, 3)
+			=>
+			Array de formatos
+		*/
+		function searchFormatsByWxHxT(min_d0, min_d1, thickness){
+			let results = [];
+			for (let i=0; i<formats.length; i++){
+				let wxh = formats[i]['wxh'];
+
+				if ((wxh[0] >= min_d0 && wxh[1] >= min_d1) || (wxh[0] >= min_d1 && wxh[1] >= min_d0)){
+					let rows = formats[i][0];
+						
+					for (let j=0; j<rows.length; j++){
+						let espesor = rows[j]['thickness'];
+						if (espesor == thickness){
+							let row = rows[j];
+							row['wxh']  = wxh;
+							row['desc'] = `panel ${wxh[0]}x${wxh[1]}`; 
+							results.push(row);
+						}
+					}	
+				}
+			}
+
+			return results;
+		}
+
+
+		/*
+			 Main
+		*/
+
+		let largo_elem;
+		let ancho_elem;
+		let espesor_elem;
+		let color_elem;
+
 		document.addEventListener('DOMContentLoaded', () => {
 			largo_elem = document.getElementById('cotizo_length');
 			ancho_elem = document.getElementById('cotizo_width');
@@ -142,10 +216,15 @@ function wpb_demo_shortcode() {
 			}); 
 
 			function restrict_length_width(){
+				let errors = 0;
+
 				if (parseInt(largo_elem.value) >max_dim || parseInt(ancho_elem.value) >max_dim){
 					addNotice(`Ninguna dimensión puede superar los ${max_dim} mm`);
-				} else {
+					errors++;
+				} 
 
+				if (!errors){
+					hideNotice();
 				}
 			}
 
@@ -156,17 +235,8 @@ function wpb_demo_shortcode() {
 			ancho_elem.addEventListener("change", function() {
 				restrict_length_width();
 			});
-
-
-
 		}, false);
 
-
-		// Main
-		let largo_elem;
-		let ancho_elem;
-		let espesor_elem;
-		let color_elem;
 
 		let formats = <?php echo json_encode($formats); ?>
 		
