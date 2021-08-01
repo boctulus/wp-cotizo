@@ -88,7 +88,9 @@ function wpb_demo_shortcode() {
 				alert_container.innerHTML = '';
 			}
 
-			let id_notice = "notice-" + (new Date().getTime()).toString();
+			let code = (new Date().getTime()).toString();
+			let id_notice = "notice-" + code;
+			let id_close  = "close-"  + code;
 
 			div = document.createElement('div');			
 			div.innerHTML = `
@@ -96,11 +98,20 @@ function wpb_demo_shortcode() {
 				<span>
 					${message}
 				</span>
-				<button type="button" class="btn-close notice" data-bs-dismiss="alert" aria-label="Close"></button>
+				<button type="button" class="btn-close notice" data-bs-dismiss="alert" aria-label="Close" id="${id_close}"></button>
 			</div>`;
 
 			alert_container.classList.add('mt-5');
 			alert_container.prepend(div);
+
+			document.getElementById(id_close).addEventListener('click', () => {
+				let cnt = document.querySelectorAll('button.btn-close.notice').length -1;
+				if (cnt == 0){
+					alert_container.classList.remove('mt-5');
+					alert_container.classList.add('mt-3');
+				}
+			});
+
 
 			return id_notice;
 		}
@@ -109,7 +120,7 @@ function wpb_demo_shortcode() {
 			if (notice_id == null){
 				let div  = document.querySelector(`div#${id_container}`);
 				div.innerHTML = '';
-				alert_container.classList.remove('mt-3');
+				alert_container.classList.remove('mt-5');
 			} else {
 				document.getElementById(notice_id).remove();
 			}
@@ -154,7 +165,7 @@ function wpb_demo_shortcode() {
 		/*
 			ssearchFormatsByWxHxT(500, 500, 3)
 			=>
-			Array de formatos
+			Array de formatos => color, precio,...
 		*/
 		function searchFormatsByWxHxT(min_d0, min_d1, thickness){
 			let results = [];
