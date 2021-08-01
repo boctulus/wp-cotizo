@@ -10,7 +10,7 @@ $formats = [
 			[
 				'thickness' => 2,
 				'color' => 'Transparente',
-				'prices' => [
+				'price' => [
 					'net' 		=> 23000,
 					'net_vat' 	=> 27370
 				]
@@ -18,7 +18,7 @@ $formats = [
 			[
 				'thickness' => 3,
 				'color' => 'Transparente',
-				'prices' => [
+				'price' => [
 					'net' 		=> 32000,
 					'net_vat' 	=> 38080
 				]
@@ -26,7 +26,7 @@ $formats = [
 			[
 				'thickness' => 3,
 				'color' => 'Negro Sólido',
-				'prices' => [
+				'price' => [
 					'net' 		=> 36000,
 					'net_vat' 	=> 42840
 				]
@@ -34,7 +34,7 @@ $formats = [
 			[
 				'thickness' => 3,
 				'color' => 'Blanco Lechoso',
-				'prices' => [
+				'price' => [
 					'net' 		=> 36000,
 					'net_vat' 	=> 42840
 				]
@@ -42,7 +42,7 @@ $formats = [
 			[
 				'thickness' => 4,
 				'color' => 'Transparente',
-				'prices' => [
+				'price' => [
 					'net' 		=> 42000,
 					'net_vat' 	=> 49980
 				]
@@ -50,7 +50,7 @@ $formats = [
 			[
 				'thickness' => 5,
 				'color' => 'Transparente',
-				'prices' => [
+				'price' => [
 					'net' 		=> 56000,
 					'net_vat' 	=> 66640
 				]
@@ -63,7 +63,7 @@ $formats = [
 			[
 				'thickness' => 3,
 				'color' => 'Transparente',
-				'prices' => [
+				'price' => [
 					'net' 		=> 43000,
 					'net_vat' 	=> 51170
 				]
@@ -71,7 +71,7 @@ $formats = [
 			[
 				'thickness' => 4,
 				'color' => 'Transparente',
-				'prices' => [
+				'price' => [
 					'net' 		=> 55000,
 					'net_vat' 	=> 65450
 				]
@@ -79,7 +79,7 @@ $formats = [
 			[
 				'thickness' => 5,
 				'color' => 'Transparente',
-				'prices' => [
+				'price' => [
 					'net' 		=> 65000,
 					'net_vat' 	=> 77350
 				]

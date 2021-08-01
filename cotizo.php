@@ -180,7 +180,6 @@ function wpb_demo_shortcode() {
 						if (espesor == thickness){
 							let row = rows[j];
 							row['wxh']  = wxh;
-							row['desc'] = `panel ${wxh[0]}x${wxh[1]}`; 
 							results.push(row);
 						}
 					}	
@@ -258,18 +257,61 @@ function wpb_demo_shortcode() {
 			let ancho = ancho_elem.value == '' ? 0 : parseInt(ancho_elem.value);
 			let espesor = espesor_elem.value == '' ? 0 : parseInt(espesor_elem.value);
 
-			_formats = searchFormatsByWxHxT(largo, ancho, espesor);
+			let data = searchFormatsByWxHxT(largo, ancho, espesor);
+
+			/*
+				Ordeno por espesor, color y finalmente precio
+			*/
+			data.sort( function (a, b) {
+				if (parseInt(a.thickness) > parseInt(b.thickness)) {
+					return 1;
+				} else if (parseInt(a.thickness) < parseInt(b.thickness)){
+					return -1;
+				} else {
+					if (a.color > b.color) {
+						return 1;
+					} else if (a.color < b.color) {
+						return -1;
+					} else {
+						if (a.price.net > b.price.net){
+							return 1;
+						} else if (a.price.net < b.price.net) {
+							return -1;
+						} else {
+							return 0;
+						}
+					}
+				}
+			});
+
+
+			/*
+				Me quedo con el más barato para los mismos atributos (espesor y color)    
+			*/
+
+			let items  = [];
+			let prev = [null, null, null];
+
+			for (var i=0; i<data.length; i++){
+				let c = [ data[i].thickness.toString(), data[i].color, data[i].price.net ];
+
+				if (c[0] == prev[0] && c[1] == prev[1]){
+					console.log('Escaping', c);
+					continue;
+				}
+
+				items.push(data[i]);
+				prev = c;
+			}
 
 			options = [];
-			for (var i=0; i<_formats.length; i++)
+			for (var i=0; i<items.length; i++)
 			{
-				let wxh   = _formats[i]['wxh'][0] + '-' + _formats[i]['wxh'][1];
-				let value = `${wxh}-${_formats[i]['thickness']}-${_formats[i]['color']}`;
-
-				//console.log(value);
+				let wxh   = items[i]['wxh'][0] + '-' + items[i]['wxh'][1];
+				let value = `${wxh}-${items[i]['thickness']}-${items[i]['color']}`;
 
 				options.push({
-					'text': _formats[i]['color'],
+					'text': items[i]['color'],
 					'value': value
 				});
 			}
