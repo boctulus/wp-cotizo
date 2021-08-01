@@ -190,6 +190,62 @@ function wpb_demo_shortcode() {
 			return results;
 		}
 
+		function setThicknessOptions(values){
+			espesor_elem.innerHTML = '';
+
+			let opt = new Option('Espesor (mm)', '');
+			opt.setAttribute('selected', true);
+			espesor_elem.appendChild(opt);
+
+			for (let i=0; i<values.length; i++){
+				let opt = new Option(`${values[i]} mm`, values[i]);
+				espesor_elem.appendChild(opt);
+			}
+		}
+
+		// cambiar <= ver cuaderno
+		function setColorOptions(values){
+			color_elem.innerHTML = '';
+
+			let opt = new Option('Color', '');
+			opt.setAttribute('selected', true);
+			color_elem.appendChild(opt);
+
+			for (let i=0; i<values.length; i++){
+				let opt = new Option(`${values[i]}`, values[i]);
+				color_elem.appendChild(opt);
+			}
+		}
+
+
+		function run()
+		{
+			let largo = largo_elem.value == '' ? 0 : parseInt(largo_elem.value);
+			let ancho = ancho_elem.value == '' ? 0 : parseInt(ancho_elem.value);
+
+			const clearDropdowns = () => {
+				setThicknessOptions();
+			};
+			
+			if (largo >max_dim || ancho >max_dim){
+				addNotice(`Ninguna dimensión puede superar los ${max_dim} mm`);
+				clearDropdowns();
+				return;
+			} 
+
+			let _formats = searchFormatsByWxH(largo, ancho);
+
+			if (_formats.length == 0){
+				addNotice(`Las dimensiones están fuera de rango.`);
+				clearDropdowns();
+				return;
+			}
+
+			let espesores = searchThickness(_formats);
+			setThicknessOptions(espesores);
+			
+			hideNotice();
+		}
 
 		/*
 			 Main
@@ -199,6 +255,8 @@ function wpb_demo_shortcode() {
 		let ancho_elem;
 		let espesor_elem;
 		let color_elem;
+		
+		var that = this;
 
 		document.addEventListener('DOMContentLoaded', () => {
 			largo_elem = document.getElementById('cotizo_length');
@@ -226,25 +284,12 @@ function wpb_demo_shortcode() {
 				}
 			}); 
 
-			function restrict_length_width(){
-				let errors = 0;
-
-				if (parseInt(largo_elem.value) >max_dim || parseInt(ancho_elem.value) >max_dim){
-					addNotice(`Ninguna dimensión puede superar los ${max_dim} mm`);
-					errors++;
-				} 
-
-				if (!errors){
-					hideNotice();
-				}
-			}
-
 			largo_elem.addEventListener("change", function() {
-				restrict_length_width();
+				run();
 			}); 
 
 			ancho_elem.addEventListener("change", function() {
-				restrict_length_width();
+				run();
 			});
 		}, false);
 

@@ -1,5 +1,8 @@
 <?php
 
+# Cantidad mínima en [mm] para ancho o largo
+define('MIN_DIM', 50);
+
 $formats = [
 	[
 		'wxh' => [1250, 1850],
