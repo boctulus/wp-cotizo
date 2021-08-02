@@ -33,25 +33,30 @@
               <!-- ini cant -->
               <div class="input-group">
                   <span class="input-group-btn">
-                      <button type="button" class="btn btn-danger btn-number" >
+                      <button type="button" class="btn btn-danger btn-number" id="cotizo_cant_down">
                           <i class="fas fa-minus"></i>
                       </button>
                   </span>
-                  <input type="text" class="form-control input-number" value="10" min="1" max="100">
+                  <input type="text" class="form-control input-number" value="1" min="1" max="9999" id="cotizo_cant" />
                   <span class="input-group-btn">
-                      <button type="button" class="btn btn-success btn-number">
+                      <button type="button" class="btn btn-success btn-number" id="cotizo_cant_up">
                           <i class="fas fa-plus"></i>
                       </button>
                   </span>
               </div>
               <!-- end cant -->
             </div>
-    
-            <div class="col-lg-9 col-md-9 col-sm-8">
+            
+            <div class="col-lg-9 col-md-9 col-sm-8 mt-3 mt-md-0">
                <button type="submit" class="btn btn-primary rounded-pill w-100" id="cotizo_cart_btn">Añadir al Carrito  </button>
             </div>
-          
         </div>
+
+        <div class="form-group mt-3">
+            <label for="SubTotal" class="col-form-label" id="cotizo_subtotal_label">SubTotal:</label>
+            <input type="text" class="form-control rounded-pill black" id="cotizo_subtotal" placeholder="$" readonly>
+        </div>
+
     </div>
 
     <div id="alert_container"></div>

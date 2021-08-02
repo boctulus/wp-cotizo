@@ -262,6 +262,7 @@ function wpb_demo_shortcode() {
 			let largo = largo_elem.value == '' ? 0 : parseInt(largo_elem.value);
 			let ancho = ancho_elem.value == '' ? 0 : parseInt(ancho_elem.value);
 			let espesor = espesor_elem.value == '' ? 0 : parseInt(espesor_elem.value);
+			let price;
 
 			let data = searchFormatsByWxHxT(largo, ancho, espesor);
 
@@ -343,6 +344,14 @@ function wpb_demo_shortcode() {
 		let espesor_elem;
 		let color_elem;
 		let price_elem;
+		let subtotal_elem;
+
+		const getValue = (elem, $default = null) => {
+			if ($default != null && (typeof elem == 'undefined' || elem.value == '')){
+				return $default;
+			}
+			return parseInt(elem.value);
+		}
 
 		const getLargo = ($default = null) => {
 			if (typeof largo_elem == 'undefined'){
@@ -383,6 +392,7 @@ function wpb_demo_shortcode() {
 			espesor_elem = document.getElementById('cotizo_thickness');
 			color_elem = document.getElementById('cotizo_color');
 			price_elem = document.getElementById('cotizo_price');
+			subtotal_elem = document.getElementById('cotizo_subtotal')
 		
 			espesor_elem.addEventListener("change", function() {
 				if (espesor_elem.value == 0){
@@ -436,9 +446,11 @@ function wpb_demo_shortcode() {
 				let h = f[1];
 				let thickness = f[2];
 				let color = f[3];
-				let price = f[4];
 				
+				price = f[4];				
+
 				price_elem.value = '$ '+ price;
+				subtotal_elem.value = '$' + (price * getValue(cotizo_cant_elem, 1)).toString();
 
 				/*
 					Creo el producto
@@ -470,8 +482,40 @@ function wpb_demo_shortcode() {
 					//console.log(textStatus);
 					addNotice('Error desconocido', 'danger', 'warning', 'alert_container', true);
 				});
+			});		
 
-			});			
+			let cotizo_cant_elem = document.getElementById('cotizo_cant');
+			let cotizo_cant_up_elem = document.getElementById('cotizo_cant_up');
+			let cotizo_cant_down_elem = document.getElementById('cotizo_cant_down');
+
+			cotizo_cant_up_elem.addEventListener('click', () => {				
+				let val = getValue(cotizo_cant_elem, 0);
+				val++;
+				cotizo_cant_elem.value = val;
+				cotizo_cant_down_elem.disabled = false;
+				document.getElementById('cotizo_subtotal').value = price * val
+			});
+			
+			cotizo_cant_down_elem.addEventListener('click', () => {					
+				let val = getValue(cotizo_cant_elem, 0);
+
+				if (val == 1){
+					cotizo_cant_down_elem.disabled = true;
+					return;
+				}
+
+				val--;
+				cotizo_cant_elem.value = val;
+				document.getElementById('cotizo_subtotal').value = '$' + (price * val).toString();
+			});
+
+
+			document.getElementById("cotizo_form").addEventListener('submit', function(event){
+				console.log('Voy a agregar al carrito. Tranqui.')
+				event.preventDefault();
+				return;
+			});
+
 		}, false);
 
 

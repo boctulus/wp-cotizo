@@ -27,6 +27,10 @@ body {
     border-color: #FF2B00;
 }
 
+#cotizo_subtotal_label {
+    color: #dedede;
+}
+
 .grey {
     color: #6C757D !important;
 }
