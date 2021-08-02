@@ -54,9 +54,12 @@ function create_product($req)
     
     if ($price === null){
         $res = new WP_REST_Response("El precio final no pudo determinarse");
-        //$res->set_status(500);
+        $res->set_status(500);
         return;
     }
+
+    // Acá iría la fórmula
+    $calculated_price = $price;  
 
     $color_lo = strtolower($color);
 
@@ -75,14 +78,17 @@ function create_product($req)
     wp_set_object_terms($product_id, 'simple', 'product_type');
 
     //add price to the product, this is where you can add some descriptions such as sku's and measurements
-    update_post_meta( $product_id, '_regular_price', $price );
-    update_post_meta( $product_id, '_sale_price', $price );
-    update_post_meta( $product_id, '_price', $price );
+    update_post_meta( $product_id, '_regular_price', $calculated_price );
+    update_post_meta( $product_id, '_sale_price', $calculated_price );
+    update_post_meta( $product_id, '_price', $calculated_price );
 
     // custom field => not working!
     update_post_meta( $product_id, 'wxh', $wxh );
 
-    $res = ['product_id' => $product_id];
+    $res = [
+        'price'      => $calculated_price,
+        'product_id' => $product_id
+    ];
 
     $res = new WP_REST_Response($res);
     $res->set_status(201);
