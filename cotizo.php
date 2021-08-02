@@ -20,6 +20,7 @@ error_reporting(E_ALL);
 require __DIR__ . '/libs/Debug.php';
 require __DIR__ . '/libs/Files.php';
 require __DIR__ . '/config.php';
+require __DIR__ . '/ajax.php';
 
 
 if (!function_exists('dd')){
@@ -273,9 +274,9 @@ function wpb_demo_shortcode() {
 					} else if (a.color < b.color) {
 						return -1;
 					} else {
-						if (a.price.net > b.price.net){
+						if (a.price > b.price){
 							return 1;
-						} else if (a.price.net < b.price.net) {
+						} else if (a.price < b.price) {
 							return -1;
 						} else {
 							return 0;
@@ -283,7 +284,6 @@ function wpb_demo_shortcode() {
 					}
 				}
 			});
-
 
 			/*
 				Me quedo con el más barato para los mismos atributos (espesor y color)    
@@ -293,10 +293,10 @@ function wpb_demo_shortcode() {
 			let prev = [null, null, null];
 
 			for (var i=0; i<data.length; i++){
-				let c = [ data[i].thickness.toString(), data[i].color, data[i].price.net ];
+				let c = [ data[i].thickness.toString(), data[i].color, data[i].price ];
 
 				if (c[0] == prev[0] && c[1] == prev[1]){
-					console.log('Escaping', c);
+					//console.log('Escaping', c);
 					continue;
 				}
 
@@ -308,7 +308,11 @@ function wpb_demo_shortcode() {
 			for (var i=0; i<items.length; i++)
 			{
 				let wxh   = items[i]['wxh'][0] + '-' + items[i]['wxh'][1];
-				let value = `${wxh}-${items[i]['thickness']}-${items[i]['color']}`;
+
+				/*
+					Idealmente definir "extra" junto con text y value y allí enviar data-*
+				*/
+				let value = `${wxh}-${items[i]['thickness']}-${items[i]['color']}-${items[i]['price']}`;
 
 				options.push({
 					'text': items[i]['color'],
@@ -327,12 +331,14 @@ function wpb_demo_shortcode() {
 		let ancho_elem;
 		let espesor_elem;
 		let color_elem;
+		let price_elem;
 
 		document.addEventListener('DOMContentLoaded', () => {
 			largo_elem = document.getElementById('cotizo_length');
 			ancho_elem = document.getElementById('cotizo_width');
 			espesor_elem = document.getElementById('cotizo_thickness');
 			color_elem = document.getElementById('cotizo_color');
+			price_elem = document.getElementById('cotizo_price');
 		
 			espesor_elem.addEventListener("change", function() {
 				if (espesor_elem.value == 0){
@@ -365,6 +371,12 @@ function wpb_demo_shortcode() {
 			espesor_elem.addEventListener("change", function() {
 				run_step2();
 			});
+
+			color_elem.addEventListener("change", function() {
+				// innecesario si usara data-*
+				let f = color_elem.value.split('-');
+				price_elem.value = '$ '+ f[4];
+			});			
 		}, false);
 
 

@@ -10,50 +10,32 @@ $formats = [
 			[
 				'thickness' => 2,
 				'color' => 'Transparente',
-				'price' => [
-					'net' 		=> 23000,
-					'net_vat' 	=> 27370
-				]
+				'price' => 27370
 			],
 			[
 				'thickness' => 3,
 				'color' => 'Transparente',
-				'price' => [
-					'net' 		=> 32000,
-					'net_vat' 	=> 38080
-				]
+				'price' => 38080
 			],
 			[
 				'thickness' => 3,
 				'color' => 'Negro Sólido',
-				'price' => [
-					'net' 		=> 36000,
-					'net_vat' 	=> 42840
-				]
+				'price' => 42840
 			],
 			[
 				'thickness' => 3,
 				'color' => 'Blanco Lechoso',
-				'price' => [
-					'net' 		=> 36000,
-					'net_vat' 	=> 42840
-				]
+				'price' => 42840
 			],
 			[
 				'thickness' => 4,
 				'color' => 'Transparente',
-				'price' => [
-					'net' 		=> 42000,
-					'net_vat' 	=> 49980
-				]
+				'price' => 49980
 			],
 			[
 				'thickness' => 5,
 				'color' => 'Transparente',
-				'price' => [
-					'net' 		=> 56000,
-					'net_vat' 	=> 66640
-				]
+				'price' => 66640
 			]
 		]
 	],
@@ -63,26 +45,17 @@ $formats = [
 			[
 				'thickness' => 3,
 				'color' => 'Transparente',
-				'price' => [
-					'net' 		=> 43000,
-					'net_vat' 	=> 51170
-				]
+				'price' => 51170
 			],
 			[
 				'thickness' => 4,
 				'color' => 'Transparente',
-				'price' => [
-					'net' 		=> 55000,
-					'net_vat' 	=> 65450
-				]
+				'price' => 65450
 			],
 			[
 				'thickness' => 5,
 				'color' => 'Transparente',
-				'price' => [
-					'net' 		=> 65000,
-					'net_vat' 	=> 77350
-				]
+				'price' => 77350
 			]
 		]
 	]

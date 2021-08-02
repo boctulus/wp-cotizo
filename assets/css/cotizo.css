@@ -14,12 +14,18 @@ body {
 }
 
 #cotizo_cart_btn {
-    background-color: #FF499C;
-    color: #FFFFFF;
-    border-color: crimson;
+    color: #dedede;
+    background-color: #00b3db;
+    border-color: #285e8e; 
     font-weight: 900;
     font-size: 105%;
     height: 60px;
+}
+
+#cotizo_cart_btn:hover {
+    background-color:#FD8612;
+    color: #FFFFFF;
+    border-color: #FF2B00;
 }
 
 .grey {
