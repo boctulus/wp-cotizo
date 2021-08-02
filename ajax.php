@@ -5,6 +5,23 @@ use cotizo\libs\Debug;
 
 require __DIR__ . '/libs/Url.php';
 
+function getPrice($wxh, $thickness, $color){
+    global $formats;
+
+    foreach ($formats as $format){
+        if ($format['wxh'] == explode('x',$wxh)){
+            $rows = $format[0];
+
+            foreach ($rows as $row){
+                if ($row['thickness'] == $thickness && $row['color'] == $color){
+                    return $row['price'];
+                }
+            }
+             
+        }
+    }
+}
+
 /*
 	REST
 
@@ -29,7 +46,17 @@ function create_product($req)
     $color = $data['color'];
     $cut = $data['cut'];
 
-    $price = 500; // debe determinarse !
+    /*
+        Por seguridad el precio se determina en el backend
+    */
+
+    $price = getPrice($wxh, $thickness, $color);
+    
+    if ($price === null){
+        $res = new WP_REST_Response("El precio final no pudo determinarse");
+        //$res->set_status(500);
+        return;
+    }
 
     $color_lo = strtolower($color);
 
@@ -51,6 +78,9 @@ function create_product($req)
     update_post_meta( $product_id, '_regular_price', $price );
     update_post_meta( $product_id, '_sale_price', $price );
     update_post_meta( $product_id, '_price', $price );
+
+    // custom field => not working!
+    update_post_meta( $product_id, 'wxh', $wxh );
 
     $res = ['product_id' => $product_id];
 

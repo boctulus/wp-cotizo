@@ -323,6 +323,12 @@ function wpb_demo_shortcode() {
 			setDropdownOptions(color_elem, options, {'text': 'Color', 'value': null});
 		}
 
+		function parseJSON(response) {
+			return response.text().then(function(text) {
+				return text ? JSON.parse(text) : {}
+			})
+		}
+
 		/*
 			 Main
 		*/
@@ -375,7 +381,41 @@ function wpb_demo_shortcode() {
 			color_elem.addEventListener("change", function() {
 				// innecesario si usara data-*
 				let f = color_elem.value.split('-');
-				price_elem.value = '$ '+ f[4];
+
+				let w = f[0];
+				let h = f[1];
+				let thickness = f[2];
+				let color = f[3];
+				let price = f[4];
+				
+				price_elem.value = '$ '+ price;
+
+				/*
+					Creo el producto
+				*/
+
+				let url = '/wp-json/cotizo/v1/products'; 
+
+				let cut = `${ancho_elem.value}x${largo_elem.value}`;
+
+				var settings = {
+				"url": url,
+				"method": "POST",
+				"timeout": 0,
+				"headers": {
+					"Content-Type": "text/plain"
+				},
+					"data": JSON.stringify({ wxh: `${w}x${h}`, thickness: thickness, color: color, cut: cut }),
+				};
+
+				jQuery.ajax(settings)
+				.done(function (response) {
+					console.log(response);
+				})
+				.fail(function (jqXHR, textStatus) {
+					addNotice('Error desconocido', 'danger');
+				});
+
 			});			
 		}, false);
 

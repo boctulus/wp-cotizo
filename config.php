@@ -1,8 +1,5 @@
 <?php
 
-# Cantidad mínima en [mm] para ancho o largo
-define('MIN_DIM', 50);
-
 $formats = [
 	[
 		'wxh' => [1250, 1850],
@@ -75,3 +72,8 @@ $colors  = [
 		'rgba' => 'rgba(223,223,223,1)'
 	],
 ];
+
+
+# Cantidad mínima en [mm] para ancho o largo
+define('MIN_DIM', 50);
+
