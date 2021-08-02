@@ -486,6 +486,10 @@ function cotizo_shortcode() {
 			});
 
 			espesor_elem.addEventListener("change", function() {
+				clearColor();
+				clearPrice();
+				clearSubTotal();
+				
 				run_step2();
 			});
 
