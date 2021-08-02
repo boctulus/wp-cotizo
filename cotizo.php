@@ -68,7 +68,7 @@ add_action( 'wp_enqueue_scripts', 'enqueues');
 
 
 // function that runs when shortcode is called
-function wpb_demo_shortcode() {  
+function cotizo_shortcode() {  
 	global $formats;
 	global $abs_min_dim;
 
@@ -262,7 +262,6 @@ function wpb_demo_shortcode() {
 			let largo = largo_elem.value == '' ? 0 : parseInt(largo_elem.value);
 			let ancho = ancho_elem.value == '' ? 0 : parseInt(ancho_elem.value);
 			let espesor = espesor_elem.value == '' ? 0 : parseInt(espesor_elem.value);
-			let price;
 
 			let data = searchFormatsByWxHxT(largo, ancho, espesor);
 
@@ -346,6 +345,9 @@ function wpb_demo_shortcode() {
 		let price_elem;
 		let subtotal_elem;
 
+		let price;
+		let subtotal;
+
 		const getValue = (elem, $default = null) => {
 			if ($default != null && (typeof elem == 'undefined' || elem.value == '')){
 				return $default;
@@ -374,17 +376,66 @@ function wpb_demo_shortcode() {
 			return parseInt(espesor_elem.value);
 		}
 
-		const clearFields = () => {
+		const clearEspesor = () => {
 			setDropdownOptions(espesor_elem, null, {'text': 'Espesor (mm)', 'value': ''});
 			espesor_elem.classList.remove('black')
 			espesor_elem.classList.add('grey');
+		}
 
+		const clearColor = () => {
 			setDropdownOptions(color_elem, null, {'text': 'Color', 'value': ''});
 			color_elem.classList.remove('black')
 			color_elem.classList.add('grey')
+		}
 
+		const clearPrice = () => {
+			price = 0;
 			price_elem.value = '';
+		}
+
+		const clearSubTotal = () => {
+			subtotal = 0;
+			subtotal_elem.value = '';
+		}
+
+		const clearFields = () => {
+			clearEspesor();			
+			clearColor();
+			clearPrice();
+			clearSubTotal();
 		};
+
+		const setPrice = (value) => {		
+			_v = value.toString();
+
+			switch (_v){
+				case 'NaN':
+					v = '';
+				break;
+				default:
+					v = _v;
+			}
+
+			price = value;
+			price_elem.value = '$ ' + v;
+		}
+
+		const setSubTotal = (value) => {		
+			_v = value.toString();
+
+			switch (_v){
+				case 'NaN':
+					v = '';
+				break;
+				default:
+					v = _v;
+			}
+
+			subtotal = value;
+			subtotal_elem.value = '$ ' + v;
+		}
+
+
 
 		document.addEventListener('DOMContentLoaded', () => {
 			largo_elem = document.getElementById('cotizo_length');
@@ -449,8 +500,8 @@ function wpb_demo_shortcode() {
 				
 				price = f[4];				
 
-				price_elem.value = '$ '+ price;
-				subtotal_elem.value = '$' + (price * getValue(cotizo_cant_elem, 1)).toString();
+				setPrice(price);
+				setSubTotal(price * getValue(cotizo_cant_elem, 1));
 
 				/*
 					Creo el producto
@@ -493,7 +544,7 @@ function wpb_demo_shortcode() {
 				val++;
 				cotizo_cant_elem.value = val;
 				cotizo_cant_down_elem.disabled = false;
-				document.getElementById('cotizo_subtotal').value = price * val
+				setSubTotal(price * val);
 			});
 			
 			cotizo_cant_down_elem.addEventListener('click', () => {					
@@ -506,7 +557,7 @@ function wpb_demo_shortcode() {
 
 				val--;
 				cotizo_cant_elem.value = val;
-				document.getElementById('cotizo_subtotal').value = '$' + (price * val).toString();
+				setSubTotal(price * val);
 			});
 
 
@@ -546,7 +597,7 @@ function wpb_demo_shortcode() {
 
 
 // register shortcode
-add_shortcode('greeting', 'wpb_demo_shortcode');
+add_shortcode('cotizo', 'cotizo_shortcode');
 
 
 
