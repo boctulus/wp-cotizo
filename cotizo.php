@@ -48,17 +48,19 @@ function start_session() {
 
 function enqueues() 
 {  
-	// JS
-    #wp_register_script('prefix_bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js');
-	wp_register_script('prefix_bootstrap', Files::get_rel_path(). '/assets/js/bootstrap/bootstrap.bundle.min.js');
-    wp_enqueue_script('prefix_bootstrap');
+    #wp_register_script('bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js');
+	wp_register_script('bootstrap', Files::get_rel_path(). 'assets/js/bootstrap/bootstrap.bundle.min.js');
+    wp_enqueue_script('bootstrap');
 
-    // CSS
-	wp_register_style('prefix_bootstrap', Files::get_rel_path() . '/assets/css/bootstrap/bootstrap.min.css');
-    #wp_register_style('prefix_bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css');
-    wp_enqueue_style('prefix_bootstrap');
+	wp_register_style('bootstrap', Files::get_rel_path() . 'assets/css/bootstrap/bootstrap.min.css');
+    #wp_register_style('bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css');
+    wp_enqueue_style('bootstrap');
 
-	wp_register_style('cotizo', Files::get_rel_path() . '/assets/css/cotizo.css');
+	#wp_register_script('fontawesome', 'https://kit.fontawesome.com/813f54acc9.js');
+	wp_register_script('fontawesome', Files::get_rel_path(). 'assets/js/fontawesome-5.js');
+    wp_enqueue_script('fontawesome');
+
+	wp_register_style('cotizo', Files::get_rel_path() . 'assets/css/cotizo.css');
     wp_enqueue_style('cotizo');
 }
 
@@ -220,10 +222,10 @@ function wpb_demo_shortcode() {
 
 			let options = [];
 			for (let i=0; i<values.length; i++){
-				options.push({'text': `${values[i]} cm`, 'value': values[i]});
+				options.push({'text': `${values[i]} mm`, 'value': values[i]});
 			}
 
-			setDropdownOptions(espesor_elem, options, {'text': 'Espesor (cm)', 'value': ''});
+			setDropdownOptions(espesor_elem, options, {'text': 'Espesor (mm)', 'value': ''});
 		}
 
 		function run_step1()
@@ -233,12 +235,12 @@ function wpb_demo_shortcode() {
 
 			if (largo >max_dim || ancho >max_dim){
 				addNotice(`Ninguna dimensión puede superar los ${max_dim} cm`, 'warning', 'alert_container', true);
-				clearDropdowns();
+				clearFields();
 				return;
 			} 
 
 			if (largo <abs_min_dim || ancho <abs_min_dim){
-				clearDropdowns();
+				clearFields();
 				return;
 			} 
 
@@ -246,7 +248,7 @@ function wpb_demo_shortcode() {
 
 			if (_formats.length == 0){
 				addNotice(`Las dimensiones están fuera de rango.`, null, 'alert_container', true);
-				clearDropdowns();
+				clearFields();
 				return;
 			}
 
@@ -363,9 +365,16 @@ function wpb_demo_shortcode() {
 			return parseInt(espesor_elem.value);
 		}
 
-		const clearDropdowns = () => {
-			setDropdownOptions(espesor_elem, null, {'text': 'Espesor (cm)', 'value': ''});
+		const clearFields = () => {
+			setDropdownOptions(espesor_elem, null, {'text': 'Espesor (mm)', 'value': ''});
+			espesor_elem.classList.remove('black')
+			espesor_elem.classList.add('grey');
+
 			setDropdownOptions(color_elem, null, {'text': 'Color', 'value': ''});
+			color_elem.classList.remove('black')
+			color_elem.classList.add('grey')
+
+			price_elem.value = '';
 		};
 
 		document.addEventListener('DOMContentLoaded', () => {
@@ -398,7 +407,7 @@ function wpb_demo_shortcode() {
 			largo_elem.addEventListener("change", function() {
 				if (getLargo(0) <abs_min_dim){
 					addNotice(`El largo mínimo es de ${abs_min_dim} cm`, 'warning', 'alert_container', true);
-					clearDropdowns();
+					clearFields();
 					return;
 				} 
 
@@ -408,7 +417,7 @@ function wpb_demo_shortcode() {
 			ancho_elem.addEventListener("change", function() {
 				if (getAncho(0) <abs_min_dim){
 					addNotice(`El ancho mínimo es de ${abs_min_dim} cm`, 'warning', 'alert_container', true);
-					clearDropdowns();
+					clearFields();
 					return;
 				} 
 
