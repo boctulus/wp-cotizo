@@ -348,6 +348,9 @@ function cotizo_shortcode() {
 		let price;
 		let subtotal;
 
+		const op_currency = { style: 'currency', currency: 'CLP' };
+		const number_format = new Intl.NumberFormat('es-CL', op_currency);
+
 		const getValue = (elem, $default = null) => {
 			if ($default != null && (typeof elem == 'undefined' || elem.value == '')){
 				return $default;
@@ -417,7 +420,7 @@ function cotizo_shortcode() {
 			}
 
 			price = value;
-			price_elem.value = '$ ' + v;
+			price_elem.value = number_format.format(v);
 		}
 
 		const setSubTotal = (value) => {		
@@ -432,7 +435,7 @@ function cotizo_shortcode() {
 			}
 
 			subtotal = value;
-			subtotal_elem.value = '$ ' + v;
+			subtotal_elem.value = number_format.format(v);
 		}
 
 
@@ -489,7 +492,7 @@ function cotizo_shortcode() {
 				clearColor();
 				clearPrice();
 				clearSubTotal();
-				
+
 				run_step2();
 			});
 
