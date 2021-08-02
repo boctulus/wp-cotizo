@@ -1,8 +1,14 @@
 <?php
 
+# Cantidad mínima en [cm] para ancho o largo
+$abs_min_dim = 3;
+
+#
+#	Largo y ancho (wxh) de los paneles están expresados en cm !!!
+#
 $formats = [
 	[
-		'wxh' => [1250, 1850],
+		'wxh' => [125, 185],
 		[
 			[
 				'thickness' => 2,
@@ -37,7 +43,7 @@ $formats = [
 		]
 	],
 	[ 
-		'wxh' => [1240, 2460],
+		'wxh' => [124, 246],
 		[
 			[
 				'thickness' => 3,
@@ -74,6 +80,5 @@ $colors  = [
 ];
 
 
-# Cantidad mínima en [mm] para ancho o largo
-define('MIN_DIM', 50);
+
 

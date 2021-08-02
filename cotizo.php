@@ -68,6 +68,8 @@ add_action( 'wp_enqueue_scripts', 'enqueues');
 // function that runs when shortcode is called
 function wpb_demo_shortcode() {  
 	global $formats;
+	global $abs_min_dim;
+
 	?>
 
 	<script>
@@ -198,7 +200,7 @@ function wpb_demo_shortcode() {
 			opt.setAttribute('selected', true);
 			select_elem.appendChild(opt);
 
-			if (typeof options == 'undefined' || options.length == 0){
+			if (typeof options == 'undefined' || options == null || options.length == 0){
 				select_elem.disabled = true;
 				return;
 			} else {
@@ -218,10 +220,10 @@ function wpb_demo_shortcode() {
 
 			let options = [];
 			for (let i=0; i<values.length; i++){
-				options.push({'text': `${values[i]} mm`, 'value': values[i]});
+				options.push({'text': `${values[i]} cm`, 'value': values[i]});
 			}
 
-			setDropdownOptions(espesor_elem, options, {'text': 'Espesor (mm)', 'value': ''});
+			setDropdownOptions(espesor_elem, options, {'text': 'Espesor (cm)', 'value': ''});
 		}
 
 		function run_step1()
@@ -229,12 +231,13 @@ function wpb_demo_shortcode() {
 			let largo = largo_elem.value == '' ? 0 : parseInt(largo_elem.value);
 			let ancho = ancho_elem.value == '' ? 0 : parseInt(ancho_elem.value);
 
-			const clearDropdowns = () => {
-				setThicknessOptions();
-			};
-			
 			if (largo >max_dim || ancho >max_dim){
-				addNotice(`Ninguna dimensión puede superar los ${max_dim} mm`);
+				addNotice(`Ninguna dimensión puede superar los ${max_dim} cm`, 'warning', 'alert_container', true);
+				clearDropdowns();
+				return;
+			} 
+
+			if (largo <abs_min_dim || ancho <abs_min_dim){
 				clearDropdowns();
 				return;
 			} 
@@ -242,7 +245,7 @@ function wpb_demo_shortcode() {
 			let _formats = searchFormatsByWxH(largo, ancho);
 
 			if (_formats.length == 0){
-				addNotice(`Las dimensiones están fuera de rango.`);
+				addNotice(`Las dimensiones están fuera de rango.`, null, 'alert_container', true);
 				clearDropdowns();
 				return;
 			}
@@ -339,6 +342,32 @@ function wpb_demo_shortcode() {
 		let color_elem;
 		let price_elem;
 
+		const getLargo = ($default = null) => {
+			if (typeof largo_elem == 'undefined'){
+				return $default;
+			}
+			return parseInt(largo_elem.value);
+		}
+
+		const getAncho = () => {
+			if (typeof ancho_elem == 'undefined'){
+				return $default;
+			}
+			return parseInt(ancho_elem.value);
+		}
+
+		const getEspesor = () => {
+			if (typeof espesor_elem == 'undefined'){
+				return $default;
+			}
+			return parseInt(espesor_elem.value);
+		}
+
+		const clearDropdowns = () => {
+			setDropdownOptions(espesor_elem, null, {'text': 'Espesor (cm)', 'value': ''});
+			setDropdownOptions(color_elem, null, {'text': 'Color', 'value': ''});
+		};
+
 		document.addEventListener('DOMContentLoaded', () => {
 			largo_elem = document.getElementById('cotizo_length');
 			ancho_elem = document.getElementById('cotizo_width');
@@ -367,10 +396,22 @@ function wpb_demo_shortcode() {
 			}); 
 
 			largo_elem.addEventListener("change", function() {
+				if (getLargo(0) <abs_min_dim){
+					addNotice(`El largo mínimo es de ${abs_min_dim} cm`, 'warning', 'alert_container', true);
+					clearDropdowns();
+					return;
+				} 
+
 				run_step1();
 			}); 
 
 			ancho_elem.addEventListener("change", function() {
+				if (getAncho(0) <abs_min_dim){
+					addNotice(`El ancho mínimo es de ${abs_min_dim} cm`, 'warning', 'alert_container', true);
+					clearDropdowns();
+					return;
+				} 
+
 				run_step1();
 			});
 
@@ -396,7 +437,10 @@ function wpb_demo_shortcode() {
 
 				let url = '/wp-json/cotizo/v1/products'; 
 
-				let cut = `${ancho_elem.value}x${largo_elem.value}`;
+				let wxh = [w,h];
+				let cut = [getLargo(), getAncho()];
+
+				let data = JSON.stringify({ wxh: wxh, thickness: thickness, color: color, cut: cut });
 
 				var settings = {
 				"url": url,
@@ -405,7 +449,7 @@ function wpb_demo_shortcode() {
 				"headers": {
 					"Content-Type": "text/plain"
 				},
-					"data": JSON.stringify({ wxh: `${w}x${h}`, thickness: thickness, color: color, cut: cut }),
+					"data": data,
 				};
 
 				jQuery.ajax(settings)
@@ -413,14 +457,17 @@ function wpb_demo_shortcode() {
 					console.log(response);
 				})
 				.fail(function (jqXHR, textStatus) {
-					addNotice('Error desconocido', 'danger');
+					//console.log(jqXHR);
+					//console.log(textStatus);
+					addNotice('Error desconocido', 'danger', 'warning', 'alert_container', true);
 				});
 
 			});			
 		}, false);
 
 
-		let formats = <?php echo json_encode($formats); ?>
+		let formats = <?php echo json_encode($formats); ?>;
+		let abs_min_dim = <?php echo $abs_min_dim; ?>;
 		
 		let min_dim = 999999;
 		let max_dim = 0;

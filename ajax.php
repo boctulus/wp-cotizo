@@ -9,7 +9,7 @@ function getPrice($wxh, $thickness, $color){
     global $formats;
 
     foreach ($formats as $format){
-        if ($format['wxh'] == explode('x',$wxh)){
+        if ($format['wxh'] == $wxh){
             $rows = $format[0];
 
             foreach ($rows as $row){
@@ -46,6 +46,10 @@ function create_product($req)
     $color = $data['color'];
     $cut = $data['cut'];
 
+    $cut_w = $cut[0];
+    $cut_h = $cut[1];
+
+
     /*
         Por seguridad el precio se determina en el backend
     */
@@ -54,7 +58,7 @@ function create_product($req)
     
     if ($price === null){
         $res = new WP_REST_Response("El precio final no pudo determinarse");
-        $res->set_status(500);
+        $res->set_status(404);
         return;
     }
 
@@ -65,9 +69,9 @@ function create_product($req)
 
 	//add them in an array
     $post = array(
-        'post_title' => "Acrílico {$cut}x{$thickness} ". $color_lo,
+        'post_title' => "Acrílico {$cut_h}CMx{$cut_w}CMx{$thickness}MM - ". $color_lo,
         'post_status' => "publish",
-        'post_content' => "Panel acrílico de color $color_lo de $cut mm^2 y $thickness mm de espesor",
+        'post_content' => "Panel acrílico de color $color_lo de {$cut_h} cm x {$cut_w} cm y $thickness mm de espesor",
         'post_type' => "product",
     );
 
