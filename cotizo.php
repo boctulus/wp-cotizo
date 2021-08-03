@@ -353,6 +353,16 @@ function cotizo_shortcode() {
 		let price;
 		let subtotal;
 
+		let cut_w;
+		let cut_h;
+		let thickness;
+		let color;
+
+		let cotizo_cant_elem;
+		let cotizo_cant_up_elem;
+		let cotizo_cant_down_elem;
+
+
 		const op_currency = { style: 'currency', currency: 'CLP' };
 		const number_format = new Intl.NumberFormat('es-CL', op_currency);
 
@@ -450,6 +460,7 @@ function cotizo_shortcode() {
 			subtotal_elem.value = number_format.format(v);
 		}
 
+		
 
 		document.addEventListener('DOMContentLoaded', () => {
 			largo_elem = document.getElementById('cotizo_length');
@@ -511,49 +522,19 @@ function cotizo_shortcode() {
 				// innecesario si usara data-*
 				let f = color_elem.value.split('-');
 
-				let w = f[0];
-				let h = f[1];
-				let thickness = f[2];
-				let color = f[3];			
+				cut_w = f[0];
+				cut_h = f[1];
+				thickness = f[2];
+				color = f[3];			
 
 				setPrice(f[4] * getFloatValue(largo_elem, 0) * getFloatValue(ancho_elem, 0));
 				setSubTotal(price * getIntValue(cotizo_cant_elem, 1));
-
-				/*
-					Creo el producto
-				*/
-
-				let url = '/wp-json/cotizo/v1/products'; 
-
-				let wxh = [w,h];
-				let cut = [getLargo(), getAncho()];
-
-				let data = JSON.stringify({ wxh: wxh, thickness: thickness, color: color, cut: cut });
-
-				var settings = {
-				"url": url,
-				"method": "POST",
-				"timeout": 0,
-				"headers": {
-					"Content-Type": "text/plain"
-				},
-					"data": data,
-				};
-
-				jQuery.ajax(settings)
-				.done(function (response) {
-					console.log(response);
-				})
-				.fail(function (jqXHR, textStatus) {
-					//console.log(jqXHR);
-					//console.log(textStatus);
-					addNotice('Error desconocido', 'danger', 'warning', 'alert_container', true);
-				});
 			});		
 
-			let cotizo_cant_elem = document.getElementById('cotizo_cant');
-			let cotizo_cant_up_elem = document.getElementById('cotizo_cant_up');
-			let cotizo_cant_down_elem = document.getElementById('cotizo_cant_down');
+
+			cotizo_cant_elem = document.getElementById('cotizo_cant');
+			cotizo_cant_up_elem = document.getElementById('cotizo_cant_up');
+			cotizo_cant_down_elem = document.getElementById('cotizo_cant_down');
 
 			cotizo_cant_up_elem.addEventListener('click', () => {				
 				let val = getIntValue(cotizo_cant_elem, 0);
@@ -578,7 +559,7 @@ function cotizo_shortcode() {
 
 
 			document.getElementById("cotizo_form").addEventListener('submit', function(event){
-				console.log('Voy a agregar al carrito. Tranqui.')
+				add_to_cart();
 				event.preventDefault();
 				return;
 			});
@@ -589,38 +570,21 @@ function cotizo_shortcode() {
 		/*
 			
 		*/
-		function add_to_cart(product_id, qty){
-			let url = '/wp-json/cotizo/v1/cart'; 
+		function add_to_cart(){
+			let qty = getIntValue(cotizo_cant_elem, 0);
+			
+			if (qty <1 ){
+				console.log('Error, cantidad inválida');
+				return;
+			}
 
-			let data = JSON.stringify({ product_id: product_id, qty: qty });
+			let url = '/wp-json/cotizo/v1/products'; 
 
-			var settings = {
-			"url": url,
-			"method": "POST",
-			"timeout": 0,
-			"headers": {
-				"Content-Type": "text/plain"
-			},
-				"data": data,
-			};
+			let wxh = [cut_w, cut_h];
+			let cut = [getLargo(), getAncho()];
+			let page_url = window.location.href.split('?')[0];
 
-			jQuery.ajax(settings)
-			.done(function (response) {
-				console.log(response);
-			})
-			.fail(function (jqXHR, textStatus) {
-				console.log(jqXHR);
-				console.log(textStatus);				
-			});
-		}
-
-		/*
-			Agrega un producto al carrito y re-dirige al checkout
-		*/
-		function add_to_cart_test(product_id, qty){
-			let url = '/wp-json/cotizo/v1/test'; 
-
-			let data = JSON.stringify({ product_id: product_id, qty: qty });
+			let data = JSON.stringify({ wxh: wxh, thickness: thickness, color: color, cut: cut });
 
 			var settings = {
 			"url": url,
@@ -635,13 +599,19 @@ function cotizo_shortcode() {
 			jQuery.ajax(settings)
 			.done(function (response) {
 				console.log(response);
+
+				let product_id = response.product_id;
+				const new_url = page_url + `?add-to-cart=${product_id}&quantity=${qty}`;
+
+				//console.log(new_url);
+				location.href = new_url;
 			})
 			.fail(function (jqXHR, textStatus) {
-				console.log(jqXHR);
-				console.log(textStatus);				
+				//console.log(jqXHR);
+				//console.log(textStatus);
+				addNotice('Error desconocido', 'danger', 'warning', 'alert_container', true);
 			});
 		}
-
 
 
 		let formats = <?php echo json_encode($formats); ?>;
