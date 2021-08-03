@@ -8,13 +8,15 @@ require __DIR__ . '/libs/Url.php';
 function getPrice($wxh, $thickness, $color){
     global $formats;
 
+    normalize($formats);
+
     foreach ($formats as $format){
         if ($format['wxh'] == $wxh){
             $rows = $format[0];
 
             foreach ($rows as $row){
                 if ($row['thickness'] == $thickness && $row['color'] == $color){
-                    return $row['price'];
+                    return $row['price_normalized'];
                 }
             }
              
@@ -63,7 +65,7 @@ function create_product($req)
     }
 
     // Acá iría la fórmula
-    $calculated_price = $price;  
+    $calculated_price = $price * $cut_h * $cut_w;  
 
     $color_lo = strtolower($color);
 

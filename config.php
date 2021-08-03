@@ -7,61 +7,61 @@ $abs_min_dim = 3;
 #	Largo y ancho (wxh) de los paneles están expresados en cm !!!
 #
 $formats = [
-	[
-		'wxh' => [125, 185],
 		[
+			'wxh' => [125, 185],
 			[
-				'thickness' => 2,
-				'color' => 'Transparente',
-				'price' => 27370
-			],
+				[
+					'thickness' => 2,
+					'color' => 'Transparente',
+					'price' => 27370
+				],
+				[
+					'thickness' => 3,
+					'color' => 'Transparente',
+					'price' => 38080
+				],
+				[
+					'thickness' => 3,
+					'color' => 'Negro Sólido',
+					'price' => 42840
+				],
+				[
+					'thickness' => 3,
+					'color' => 'Blanco Lechoso',
+					'price' => 42840
+				],
+				[
+					'thickness' => 4,
+					'color' => 'Transparente',
+					'price' => 49980
+				],
+				[
+					'thickness' => 5,
+					'color' => 'Transparente',
+					'price' => 66640
+				]
+			]
+		],
+		[ 
+			'wxh' => [124, 246],
 			[
-				'thickness' => 3,
-				'color' => 'Transparente',
-				'price' => 38080
-			],
-			[
-				'thickness' => 3,
-				'color' => 'Negro Sólido',
-				'price' => 42840
-			],
-			[
-				'thickness' => 3,
-				'color' => 'Blanco Lechoso',
-				'price' => 42840
-			],
-			[
-				'thickness' => 4,
-				'color' => 'Transparente',
-				'price' => 49980
-			],
-			[
-				'thickness' => 5,
-				'color' => 'Transparente',
-				'price' => 66640
+				[
+					'thickness' => 3,
+					'color' => 'Transparente',
+					'price' => 51170
+				],
+				[
+					'thickness' => 4,
+					'color' => 'Transparente',
+					'price' => 65450
+				],
+				[
+					'thickness' => 5,
+					'color' => 'Transparente',
+					'price' => 77350
+				]
 			]
 		]
-	],
-	[ 
-		'wxh' => [124, 246],
-		[
-			[
-				'thickness' => 3,
-				'color' => 'Transparente',
-				'price' => 51170
-			],
-			[
-				'thickness' => 4,
-				'color' => 'Transparente',
-				'price' => 65450
-			],
-			[
-				'thickness' => 5,
-				'color' => 'Transparente',
-				'price' => 77350
-			]
-		]
-	]
 ];
 
 $colors  = [

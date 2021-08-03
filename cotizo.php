@@ -67,11 +67,25 @@ function enqueues()
 add_action( 'wp_enqueue_scripts', 'enqueues');
 
 
+/*
+		Calculo el área y los precios normalizados
+*/
+function normalize(&$formats){	
+	foreach ($formats as $k => $format) {
+		$formats[$k]['area'] = $formats[$k]['wxh'][0] * $formats[$k]['wxh'][1];
+	
+		foreach ($formats[$k][0] as $kr => $row) {
+			$formats[$k][0][$kr]['price_normalized'] = (float) number_format((float) $row['price'] / $formats[$k]['area'], 4, '.', '');
+		}
+	}
+}
+
 // function that runs when shortcode is called
 function cotizo_shortcode() {  
 	global $formats;
 	global $abs_min_dim;
 
+	normalize($formats);
 	?>
 
 	<script>
@@ -279,9 +293,9 @@ function cotizo_shortcode() {
 					} else if (a.color < b.color) {
 						return -1;
 					} else {
-						if (a.price > b.price){
+						if (a.price_normalized > b.price_normalized){
 							return 1;
-						} else if (a.price < b.price) {
+						} else if (a.price_normalized < b.price_normalized) {
 							return -1;
 						} else {
 							return 0;
@@ -317,7 +331,7 @@ function cotizo_shortcode() {
 				/*
 					Idealmente definir "extra" junto con text y value y allí enviar data-*
 				*/
-				let value = `${wxh}-${items[i]['thickness']}-${items[i]['color']}-${items[i]['price']}`;
+				let value = `${wxh}-${items[i]['thickness']}-${items[i]['color']}-${items[i]['price_normalized']}`;
 
 				options.push({
 					'text': items[i]['color'],
@@ -351,11 +365,18 @@ function cotizo_shortcode() {
 		const op_currency = { style: 'currency', currency: 'CLP' };
 		const number_format = new Intl.NumberFormat('es-CL', op_currency);
 
-		const getValue = (elem, $default = null) => {
+		const getIntValue = (elem, $default = null) => {
 			if ($default != null && (typeof elem == 'undefined' || elem.value == '')){
 				return $default;
 			}
 			return parseInt(elem.value);
+		}
+
+		const getFloatValue = (elem, $default = null) => {
+			if ($default != null && (typeof elem == 'undefined' || elem.value == '')){
+				return $default;
+			}
+			return parseFloat(elem.value);
 		}
 
 		const getLargo = ($default = null) => {
@@ -439,7 +460,6 @@ function cotizo_shortcode() {
 		}
 
 
-
 		document.addEventListener('DOMContentLoaded', () => {
 			largo_elem = document.getElementById('cotizo_length');
 			ancho_elem = document.getElementById('cotizo_width');
@@ -503,12 +523,10 @@ function cotizo_shortcode() {
 				let w = f[0];
 				let h = f[1];
 				let thickness = f[2];
-				let color = f[3];
-				
-				price = f[4];				
+				let color = f[3];			
 
-				setPrice(price);
-				setSubTotal(price * getValue(cotizo_cant_elem, 1));
+				setPrice(f[4] * getFloatValue(largo_elem, 0) * getFloatValue(ancho_elem, 0));
+				setSubTotal(price * getIntValue(cotizo_cant_elem, 1));
 
 				/*
 					Creo el producto
@@ -547,7 +565,7 @@ function cotizo_shortcode() {
 			let cotizo_cant_down_elem = document.getElementById('cotizo_cant_down');
 
 			cotizo_cant_up_elem.addEventListener('click', () => {				
-				let val = getValue(cotizo_cant_elem, 0);
+				let val = getIntValue(cotizo_cant_elem, 0);
 				val++;
 				cotizo_cant_elem.value = val;
 				cotizo_cant_down_elem.disabled = false;
@@ -555,7 +573,7 @@ function cotizo_shortcode() {
 			});
 			
 			cotizo_cant_down_elem.addEventListener('click', () => {					
-				let val = getValue(cotizo_cant_elem, 0);
+				let val = getIntValue(cotizo_cant_elem, 0);
 
 				if (val == 1){
 					cotizo_cant_down_elem.disabled = true;
