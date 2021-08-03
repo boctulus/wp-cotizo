@@ -8,6 +8,8 @@ Author: boctulus@gmail.com <Pablo>
 
 use cotizo\libs\Debug;
 use cotizo\libs\Files;
+use cotizo\libs\Url;
+use cotizo\libs\Strings;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
@@ -19,6 +21,8 @@ error_reporting(E_ALL);
 
 require __DIR__ . '/libs/Debug.php';
 require __DIR__ . '/libs/Files.php';
+#require __DIR__ . '/libs/Url.php';
+require __DIR__ . '/libs/Strings.php';
 require __DIR__ . '/config.php';
 require __DIR__ . '/ajax.php';
 
@@ -71,12 +75,75 @@ function normalize(&$formats){
 	}
 }
 
+/**
+ * Method to delete Woo Product
+ * 
+ * $force true to permanently delete product, false to move to trash.
+ * 
+ */
+function deleteProduct($id, $force = FALSE)
+{
+    $product = wc_get_product($id);
+
+    if(empty($product))
+        return new WP_Error(999, sprintf(__('No %s is associated with #%d', 'woocommerce'), 'product', $id));
+
+    // If we're forcing, then delete permanently.
+    if ($force)
+    {
+        if ($product->is_type('variable'))
+        {
+            foreach ($product->get_children() as $child_id)
+            {
+                $child = wc_get_product($child_id);
+                $child->delete(true);
+            }
+        }
+        elseif ($product->is_type('grouped'))
+        {
+            foreach ($product->get_children() as $child_id)
+            {
+                $child = wc_get_product($child_id);
+                $child->set_parent_id(0);
+                $child->save();
+            }
+        }
+
+        $product->delete(true);
+        $result = $product->get_id() > 0 ? false : true;
+    }
+    else
+    {
+        $product->delete();
+        $result = 'trash' === $product->get_status();
+    }
+
+    if (!$result)
+    {
+        return new WP_Error(999, sprintf(__('This %s cannot be deleted', 'woocommerce'), 'product'));
+    }
+
+    // Delete parent product transients.
+    if ($parent_id = wp_get_post_parent_id($id))
+    {
+        wc_delete_product_transients($parent_id);
+    }
+    return true;
+}
+
 // function that runs when shortcode is called
 function cotizo_shortcode() {  
 	global $formats;
 	global $abs_min_dim;
 
 	normalize($formats);
+
+	$last_added_product_id = Url::getQueryParam($_SERVER['REQUEST_URI'], 'add-to-cart');
+	$needs_to_trash = Url::getQueryParam($_SERVER['REQUEST_URI'], 'temp_product') !== null;
+
+	if ($needs_to_trash){
+		//deleteProduct($last_added_product_id, true);
+	}	
 	?>
 
 	<script>
@@ -601,7 +668,7 @@ function cotizo_shortcode() {
 				console.log(response);
 
 				let product_id = response.product_id;
-				const new_url = page_url + `?add-to-cart=${product_id}&quantity=${qty}`;
+				const new_url = page_url + `?add-to-cart=${product_id}&quantity=${qty}&temp_product=true`;
 
 				//console.log(new_url);
 				location.href = new_url;

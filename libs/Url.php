@@ -4,6 +4,29 @@ namespace cotizo\libs;
 
 class Url 
 {    
+    static function getQueryParam(string $url, string $param){
+        $query = parse_url($url, PHP_URL_QUERY);
+
+        $x = null;
+        if ($query != null){
+            $q = explode('&', $query); 
+            foreach($q as $p){
+                if (Strings::startsWith($param . '=', $p)){
+                    $_x = explode('=', $p);
+                    $x  = $_x[count($_x)-1];                    
+                }
+            }
+        }
+
+        return $x;
+    }
+
+    static function getBaseUrl($url, bool $include_path = false)
+    {
+        $url_info = parse_url($url);
+        return  $url_info['scheme'] . '://' . $url_info['host'];
+    }
+
     /*
         @author     Pablo Bozzolo   boctulus@gmail.com
     */
