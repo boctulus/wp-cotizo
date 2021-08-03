@@ -585,11 +585,40 @@ function cotizo_shortcode() {
 
 		}, false);
 
+
 		/*
-			Solo para testing
+			
 		*/
 		function add_to_cart(product_id, qty){
 			let url = '/wp-json/cotizo/v1/cart'; 
+
+			let data = JSON.stringify({ product_id: product_id, qty: qty });
+
+			var settings = {
+			"url": url,
+			"method": "POST",
+			"timeout": 0,
+			"headers": {
+				"Content-Type": "text/plain"
+			},
+				"data": data,
+			};
+
+			jQuery.ajax(settings)
+			.done(function (response) {
+				console.log(response);
+			})
+			.fail(function (jqXHR, textStatus) {
+				console.log(jqXHR);
+				console.log(textStatus);				
+			});
+		}
+
+		/*
+			Agrega un producto al carrito y re-dirige al checkout
+		*/
+		function add_to_cart_test(product_id, qty){
+			let url = '/wp-json/cotizo/v1/test'; 
 
 			let data = JSON.stringify({ product_id: product_id, qty: qty });
 
