@@ -68,9 +68,9 @@ function create_product($req)
 
 	//add them in an array
     $post = array(
-        'post_title' => "Acrílico {$cut_h}CMx{$cut_w}CMx{$thickness}MM - ". $color_lo,
+        'post_title' => "Acrílico {$cut_h}x{$cut_w} cms y {$thickness}mm - ". $color_lo,
         'post_status' => "publish",
-        'post_content' => "Panel acrílico de color $color_lo de {$cut_h} cm x {$cut_w} cm y $thickness mm de espesor",
+        'post_content' => "Panel acrílico $color_lo de $thickness mm de espesor cortado a {$cut_h} cm x {$cut_w} cm ",
         'post_type' => "product",
     );
 

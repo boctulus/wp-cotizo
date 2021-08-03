@@ -8,6 +8,17 @@ namespace cotizo\libs;
 
 class Files
 {
+	static function logger($data, $filename = 'log.txt'){	
+		$path = __DIR__ . '/../logs/'. $filename; 
+		
+		if (is_array($data) || is_object($data))
+			$data = json_encode($data);
+		
+		$data = date("Y-m-d H:i:s"). "\t" .$data;
+
+		return file_put_contents($path, $data. "\n", FILE_APPEND);
+	}
+
 	static function dump($object, $filename = 'log.txt', $append = false){
 		$path = __DIR__ . '/../logs/'. $filename; 
 

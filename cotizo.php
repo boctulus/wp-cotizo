@@ -8,6 +8,7 @@ Author: boctulus@gmail.com <Pablo>
 
 use cotizo\libs\Debug;
 use cotizo\libs\Files;
+use cotizo\libs\Strings;
 
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
@@ -19,6 +20,7 @@ error_reporting(E_ALL);
 
 require __DIR__ . '/libs/Debug.php';
 require __DIR__ . '/libs/Files.php';
+require __DIR__ . '/libs/Strings.php';
 require __DIR__ . '/config.php';
 require __DIR__ . '/ajax.php';
 
@@ -748,7 +750,21 @@ function clear_temp( $order_id ) {
             $product_id = $item['product_id']; // simple product
         }
 
-        deleteProduct($product_id, false);
+		// Get the product object
+        $product = wc_get_product( $product_id );
+		
+		if ($product === false) {
+			return;
+		}
+
+		$desc = $product->get_description();
+
+		// Panel acrílico
+		if (Strings::startsWith('Panel acrílico', $desc) && Strings::containsWord('cortado', $desc)){
+			//Files::logger('Borrando producto con titulo' . $product->get_title());
+			deleteProduct($product_id, false);
+		}
+        
     }
 }
 
