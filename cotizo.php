@@ -23,6 +23,12 @@ require __DIR__ . '/config.php';
 require __DIR__ . '/ajax.php';
 
 
+/*
+	Referencia imporante:
+
+	https://www.businessbloomer.com/woocommerce-custom-add-cart-urls-ultimate-guide/
+*/
+
 if (!function_exists('dd')){
 	function dd($val, $msg = null, $pre_cond = null){
 		Debug::dd($val, $msg, $pre_cond);
@@ -123,7 +129,7 @@ function normalize(&$formats){
 		$formats[$k]['area'] = $formats[$k]['wxh'][0] * $formats[$k]['wxh'][1];
 	
 		foreach ($formats[$k][0] as $kr => $row) {
-			$formats[$k][0][$kr]['price_normalized'] = (float) number_format((float) $row['price'] / $formats[$k]['area'], 4, '.', '');
+			$formats[$k][0][$kr]['price_normalized'] = (float) number_format((float) $row['price'] / $formats[$k]['area'], 4, '.', '') * 1.1 * 1.25;
 		}
 	}
 }
