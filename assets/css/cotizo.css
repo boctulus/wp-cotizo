@@ -10,7 +10,7 @@
 }
 
 #cotizo_cart_btn {
-    color: #dedede;
+    color: #ffffff;
     background-color: #00b3db;
     border-color: #285e8e; 
     /* font-weight: 900; */
@@ -24,12 +24,13 @@
 }
 
 #cotizo_subtotal_label {
-    color: #dedede;
+    color: #000000;
 }
 
 #cotizo_cant_up, #cotizo_cant_down {
     background-color: #00b3db;
     color: #dedede
+    
 }
 
 .grey {
@@ -54,10 +55,17 @@
 }
 
 
+/* Font Awesome */
+
+.fa-outline-dark-gray {
+    font-weight: 900;
+}
+
 /* Spiner */
 
 #overlay{	
     position: fixed;
+    left:0;
     top: 0;
     z-index: 100;
     width: 100%;
@@ -87,7 +95,7 @@
       transform: rotate(360deg); 
     }
   }
-  
+
   .is-hide{
     display:none;
   }

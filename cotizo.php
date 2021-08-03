@@ -37,6 +37,63 @@ if ( !in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', 
 }	
 
 
+/**
+ * Method to delete Woo Product
+ * 
+ * $force true to permanently delete product, false to move to trash.
+ * 
+ */
+function deleteProduct($id, $force = FALSE)
+{
+    $product = wc_get_product($id);
+
+    if(empty($product))
+        return new WP_Error(999, sprintf(__('No %s is associated with #%d', 'woocommerce'), 'product', $id));
+
+    // If we're forcing, then delete permanently.
+    if ($force)
+    {
+        if ($product->is_type('variable'))
+        {
+            foreach ($product->get_children() as $child_id)
+            {
+                $child = wc_get_product($child_id);
+                $child->delete(true);
+            }
+        }
+        elseif ($product->is_type('grouped'))
+        {
+            foreach ($product->get_children() as $child_id)
+            {
+                $child = wc_get_product($child_id);
+                $child->set_parent_id(0);
+                $child->save();
+            }
+        }
+
+        $product->delete(true);
+        $result = $product->get_id() > 0 ? false : true;
+    }
+    else
+    {
+        $product->delete();
+        $result = 'trash' === $product->get_status();
+    }
+
+    if (!$result)
+    {
+        return new WP_Error(999, sprintf(__('This %s cannot be deleted', 'woocommerce'), 'product'));
+    }
+
+    // Delete parent product transients.
+    if ($parent_id = wp_get_post_parent_id($id))
+    {
+        wc_delete_product_transients($parent_id);
+    }
+    return true;
+}
+
+
 function enqueues() 
 {  
     #wp_register_script('bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js');
@@ -582,6 +639,10 @@ function cotizo_shortcode() {
 				return;
 			}
 
+			jQuery(document).ajaxSend(function() {
+				jQuery("#overlay").fadeIn(300);　
+			});					
+					
 			let url = '/wp-json/cotizo/v1/products'; 
 
 			let wxh = [cut_w, cut_h];
@@ -605,10 +666,15 @@ function cotizo_shortcode() {
 				console.log(response);
 
 				let product_id = response.product_id;
-				const new_url = page_url + `?add-to-cart=${product_id}&quantity=${qty}`;
+				const new_url = page_url + `?add-to-cart=${product_id}&quantity=${qty}&temp_product=true`;
 
-				//console.log(new_url);
-				location.href = new_url;
+				setTimeout(function(){
+					jQuery("#overlay").fadeOut(300);
+				},500);
+
+				setTimeout(function(){
+					location.href = new_url;
+				},550);				
 			})
 			.fail(function (jqXHR, textStatus) {
 				//console.log(jqXHR);
@@ -642,6 +708,43 @@ function cotizo_shortcode() {
 	$html = file_get_contents(__DIR__ . '/form.html'); 
 	return $html;
 } 
+
+/*
+	Cuando el producto ya pasó el checkout
+*/
+
+add_action('woocommerce_thankyou', 'clear_temp', 10, 1);
+
+function clear_temp( $order_id ) {
+
+    if ( ! $order_id )
+        return;
+
+    // Getting an instance of the order object
+    $order = wc_get_order( $order_id );
+
+    if($order->is_paid())
+        $paid = 'yes';
+    else
+        $paid = 'no';
+
+	if (!$paid){
+		return;
+	}
+
+    // iterating through each order items (getting product ID and the product object) 
+    // (work for simple and variable products)
+    foreach ( $order->get_items() as $item_id => $item ) {
+
+        if( $item['variation_id'] > 0 ){
+            $product_id = $item['variation_id']; // variable product
+        } else {
+            $product_id = $item['product_id']; // simple product
+        }
+
+        deleteProduct($product_id, false);
+    }
+}
 
 
 // register shortcode
