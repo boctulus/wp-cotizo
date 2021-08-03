@@ -36,15 +36,6 @@ if ( !in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', 
 	return;
 }	
 
-/*
-add_action('init', 'start_session', 1);
-
-function start_session() {
-	if(!session_id()) {
-		session_start();
-	}
-}
-*/
 
 function enqueues() 
 {  
@@ -593,6 +584,35 @@ function cotizo_shortcode() {
 			});
 
 		}, false);
+
+		/*
+			Solo para testing
+		*/
+		function add_to_cart(product_id, qty){
+			let url = '/wp-json/cotizo/v1/cart'; 
+
+			let data = JSON.stringify({ product_id: product_id, qty: qty });
+
+			var settings = {
+			"url": url,
+			"method": "POST",
+			"timeout": 0,
+			"headers": {
+				"Content-Type": "text/plain"
+			},
+				"data": data,
+			};
+
+			jQuery.ajax(settings)
+			.done(function (response) {
+				console.log(response);
+			})
+			.fail(function (jqXHR, textStatus) {
+				console.log(jqXHR);
+				console.log(textStatus);				
+			});
+		}
+
 
 
 		let formats = <?php echo json_encode($formats); ?>;

@@ -102,6 +102,54 @@ function create_product($req)
     return $res;
 }
 
+/*
+    Temporal,
+
+    luego debe haber en un solo endpoint para poder destruir el producto luego de agregarlo 
+    (que no queden productos olvidados)
+
+*/
+function add_to_cart($req){
+    $data = $req->get_body();
+
+    if ($data === null){
+        throw new \Exception("Body está vacio");
+    }
+
+    $data = json_decode($data, true);
+
+    if ($data === null){
+        throw new \Exception("Invalid JSON");
+    }
+
+    $product_id = $data['product_id'] ?? null;
+    $qty   = $data['qty'] ?? 1;
+
+
+    if ( null === WC()->session ) {
+        $session_class = apply_filters( 'woocommerce_session_handler', 'WC_Session_Handler' );
+    
+        WC()->session = new $session_class();
+        WC()->session->init();
+    }
+    
+    if ( null === WC()->customer ) {
+        WC()->customer = new WC_Customer( get_current_user_id(), true );
+    }
+    
+    WC()->frontend_includes();
+
+    $ok = null;
+    if ( null === WC()->cart ) {
+        WC()->cart = new WC_Cart();
+        $cart_id = WC()->cart->add_to_cart($product_id, $qty);
+    }    
+
+    return [
+        'cart_id' => $cart_id
+    ];
+}
+
 
 /*
 	/wp-json/cotizo/v1/xxxxx
@@ -111,6 +159,13 @@ add_action( 'rest_api_init', function () {
 	register_rest_route( 'cotizo/v1', '/products', array(
 		'methods' => 'POST',
 		'callback' => 'create_product',
+        'permission_callback' => '__return_true'
+	) );
+
+    #	/wp-json/cotizo/v1/cart
+	register_rest_route( 'cotizo/v1', '/cart', array(
+		'methods' => 'POST',
+		'callback' => 'add_to_cart',
         'permission_callback' => '__return_true'
 	) );
 } );
