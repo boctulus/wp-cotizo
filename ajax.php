@@ -100,15 +100,6 @@ function create_product($req)
 }
 
 /*
-function delete_product(){
-    $product_id = $_GET['id'];
-
-    $res = wh_deleteProduct($product_id, true);
-    return $res;
-}
-*/
-
-/*
 	/wp-json/cotizo/v1/xxxxx
 */
 add_action( 'rest_api_init', function () {	
@@ -118,15 +109,6 @@ add_action( 'rest_api_init', function () {
 		'callback' => 'create_product',
         'permission_callback' => '__return_true'
 	) );
-
-    #  DELETE /wp-json/cotizo/v1/products
-    /*
-	register_rest_route( 'cotizo/v1', '/products', array(
-		'methods' => 'DELETE',
-		'callback' => 'delete_product',
-        'permission_callback' => '__return_true'
-	) );
-    */
 } );
 
 
