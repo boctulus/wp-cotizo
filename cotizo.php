@@ -104,19 +104,19 @@ function deleteProduct($id, $force = FALSE)
 
 function enqueues() 
 {  
-    #wp_register_script('bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js');
-	wp_register_script('bootstrap', Files::get_rel_path(). 'assets/js/bootstrap/bootstrap.bundle.min.js');
+    wp_register_script('bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js');
+	#wp_register_script('bootstrap', Files::get_rel_path(). 'assets/js/bootstrap/bootstrap.bundle.min.js');
     wp_enqueue_script('bootstrap');
 
-	wp_register_style('bootstrap', Files::get_rel_path() . 'assets/css/bootstrap/bootstrap.min.css');
-    #wp_register_style('bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css');
+	wp_register_style('bootstrap', 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css');
+	#wp_register_style('bootstrap', Files::get_rel_path() . 'assets/css/bootstrap/bootstrap.min.css');
     wp_enqueue_style('bootstrap');
 
-	#wp_register_script('fontawesome', 'https://kit.fontawesome.com/813f54acc9.js');
-	wp_register_script('fontawesome', Files::get_rel_path(). 'assets/js/fontawesome-5.js');
+	wp_register_script('fontawesome', 'https://kit.fontawesome.com/813f54acc9.js');
+	#wp_register_script('fontawesome', Files::get_rel_path(). 'assets/js/fontawesome-5.js');
     wp_enqueue_script('fontawesome');
 
-	wp_register_style('cotizo', Files::get_rel_path() . 'assets/css/cotizo.css');
+	wp_register_style('cotizo',  site_url() . '/wp-content/plugins/wp-cotizo/assets/css/cotizo.css');
     wp_enqueue_style('cotizo');
 }
 
